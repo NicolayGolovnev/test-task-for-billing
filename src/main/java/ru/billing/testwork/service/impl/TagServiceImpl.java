@@ -33,11 +33,12 @@ public class TagServiceImpl implements TagService {
         if (tag.getId() != null) {
             Optional<TagEntity> optionalTagEntity = repository.findById(tag.getId());
             if (optionalTagEntity.isPresent()) {
+                tagEntity.setId(tag.getId());
                 tagEntity.setTitle(tag.getTitle());
-                tagEntity.setTasks(optionalTagEntity.get().getTasks());
+                tagEntity.getTasks().addAll(optionalTagEntity.get().getTasks());
             }
         }
-        tagEntity = repository.save(tagEntity);
+        repository.save(tagEntity);
 
         tag.setId(tagEntity.getId());
         List<TaskModel> tasks = new ArrayList<>();
