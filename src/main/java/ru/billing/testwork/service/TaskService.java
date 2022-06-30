@@ -10,6 +10,7 @@ import java.util.List;
 public interface TaskService {
     /**
      * Сохранения задачи
+     *
      * @param task модель данных задачи
      * @return идентификатор сохраненной задачи
      */
@@ -17,12 +18,14 @@ public interface TaskService {
 
     /**
      * Удаление задачи
+     *
      * @param id идентификатор задачи
      */
     void delete(Long id);
 
     /**
      * Получения списка всех существующих задач
+     *
      * @return список задач
      */
     List<TaskModel> getAllTasks();

@@ -7,6 +7,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class MyExceptionHandler {
+    /**
+     * Обработчик исключения Exception
+     *
+     * @param exception обработанное исключение
+     * @return вывод страницы со статусом обработки 500 и сообщением
+     */
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<String> responseEntityException(Exception exception) {
         String status = "Error caused by exception: " + exception.getMessage();

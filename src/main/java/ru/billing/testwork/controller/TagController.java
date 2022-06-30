@@ -10,11 +10,20 @@ import ru.billing.testwork.service.impl.TagServiceImpl;
 
 import javax.validation.Valid;
 
+/**
+ * Контроллер с crud операциями по тегам
+ */
 @RestController
 public class TagController {
     @Autowired
     private TagServiceImpl tagService;
 
+    /**
+     * POST-запрос на добавление/редактирование тега
+     * @param tagModel модель с данными тега
+     * @param bindingResult ошибки валидации
+     * @return ответ-сущность со статусом обработки и соответствующим сообщением
+     */
     @PostMapping("/tag")
     public ResponseEntity<?> createTag(
             @RequestBody @Valid TagModel tagModel,
@@ -26,11 +35,21 @@ public class TagController {
             return new ResponseEntity<>(tagService.save(tagModel), HttpStatus.CREATED);
     }
 
+    /**
+     * GET-запрос на вывод данных тега по идентификатору
+     * @param id идентификатор тега
+     * @return ответ-сущность со статусом обработки и соответствующим сообщением
+     */
     @GetMapping("/tag/{id}")
     public ResponseEntity<TagModel> getAllTasks(@PathVariable("id") Long id) {
         return new ResponseEntity<>(tagService.getAllTaskByTag(id), HttpStatus.OK);
     }
 
+    /**
+     * DELETE-запрос на удаление тега из БД по идентификатору
+     * @param id идентификатор тега
+     * @return ответ-сущность со статусом обработки и соответствующим сообщением
+     */
     @DeleteMapping("/tag/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable("id") Long id) {
         tagService.delete(id);

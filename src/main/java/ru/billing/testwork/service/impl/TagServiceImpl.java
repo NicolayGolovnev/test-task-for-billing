@@ -81,8 +81,7 @@ public class TagServiceImpl implements TagService {
                     .title(tagEntity.get().getTitle())
                     .tasks(tasks)
                     .build();
-        }
-        else
+        } else
             throw new EntityNotFoundException("Tag[id=" + id + "] not found in database!");
 
     }

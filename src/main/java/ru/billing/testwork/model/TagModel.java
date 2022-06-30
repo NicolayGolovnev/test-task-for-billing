@@ -2,12 +2,14 @@ package ru.billing.testwork.model;
 
 import lombok.*;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Модель данных тега для работы со стороны клиента
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

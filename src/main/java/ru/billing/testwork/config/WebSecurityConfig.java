@@ -16,18 +16,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers(HttpMethod.GET, "/tag/*");
     }
 
+    /**
+     * Конфигурация базовой авторизации http запросов
+     *
+     * @param http элемент конфигурации spring security xml
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/tag", "/tag/*").hasRole("ADMIN")
-                    .antMatchers("/task", "/task/*").hasRole("ADMIN")
-                    .anyRequest().permitAll()
+                .antMatchers("/tag", "/tag/*").hasRole("ADMIN")
+                .antMatchers("/task", "/task/*").hasRole("ADMIN")
+                .anyRequest().permitAll()
                 .and()
-                    .httpBasic();
+                .httpBasic();
     }
 
+    /**
+     * Конфигурация менеджера аутентификации
+     *
+     * @param auth билдер менеджера аутентификации
+     * @throws Exception
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
