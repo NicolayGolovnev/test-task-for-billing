@@ -1,6 +1,9 @@
 package ru.billing.testwork.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import ru.billing.testwork.entity.TagEntity;
 import ru.billing.testwork.entity.TaskEntity;
@@ -19,29 +22,45 @@ public class TagServiceImpl implements TagService {
     @Autowired
     private TagRepository repository;
 
+    @CachePut(cacheNames = "tagsCache", key = "#tag.id")
     @Override
-    public Long save(TagModel tag) {
-        Optional<TagEntity> optionalTagEntity = repository.findById(tag.getId());
-        TagEntity tagEntity;
-        if (optionalTagEntity.isEmpty()) {
-            tagEntity = TagEntity.builder()
-                    .title(tag.getTitle())
-                    .tasks(new ArrayList<>())
-                    .build();
-        }
-        else {
-            tagEntity = optionalTagEntity.get();
-            tagEntity.setTitle(tag.getTitle());
-        }
+    public TagModel save(TagModel tag) {
+        TagEntity tagEntity = TagEntity.builder()
+                .title(tag.getTitle())
+                .tasks(new ArrayList<>())
+                .build();
 
-        return repository.save(tagEntity).getId();
+        if (tag.getId() != null) {
+            Optional<TagEntity> optionalTagEntity = repository.findById(tag.getId());
+            if (optionalTagEntity.isPresent()) {
+                tagEntity.setTitle(tag.getTitle());
+                tagEntity.setTasks(optionalTagEntity.get().getTasks());
+            }
+        }
+        tagEntity = repository.save(tagEntity);
+
+        tag.setId(tagEntity.getId());
+        List<TaskModel> tasks = new ArrayList<>();
+        for (TaskEntity task : tagEntity.getTasks())
+            tasks.add(TaskModel.builder()
+                    .id(task.getId())
+                    .name(task.getName())
+                    .description(task.getDescription())
+                    .taskDate(task.getTaskDate())
+                    .tagId(tagEntity.getId())
+                    .build());
+        tag.setTasks(tasks);
+
+        return tag;
     }
 
+    @CacheEvict(cacheNames = "tagsCache", key = "#id")
     @Override
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
+    @Cacheable(cacheNames = "tagsCache", key = "#id")
     @Override
     public TagModel getAllTaskByTag(Long id) {
         Optional<TagEntity> tagEntity = repository.findById(id);

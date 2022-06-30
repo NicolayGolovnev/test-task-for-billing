@@ -13,7 +13,7 @@ public class TagController {
     private TagServiceImpl tagService;
 
     @PostMapping("/tag")
-    public ResponseEntity<Long> createTag(@RequestBody TagModel tagModel) {
+    public ResponseEntity<TagModel> createTag(@RequestBody TagModel tagModel) {
         return new ResponseEntity<>(tagService.save(tagModel), HttpStatus.CREATED);
     }
 
