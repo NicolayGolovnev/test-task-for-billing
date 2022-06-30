@@ -21,23 +21,20 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Long save(TagModel tag) {
-        TagEntity entity = TagEntity.builder()
-                .id(tag.getId())
-                .title(tag.getTitle())
-                .build();
+        Optional<TagEntity> optionalTagEntity = repository.findById(tag.getId());
+        TagEntity tagEntity;
+        if (optionalTagEntity.isEmpty()) {
+            tagEntity = TagEntity.builder()
+                    .title(tag.getTitle())
+                    .tasks(new ArrayList<>())
+                    .build();
+        }
+        else {
+            tagEntity = optionalTagEntity.get();
+            tagEntity.setTitle(tag.getTitle());
+        }
 
-        List<TaskEntity> tasks = new ArrayList<>();
-        for (TaskModel task : tag.getTasks())
-            tasks.add(TaskEntity.builder()
-                    .id(task.getId())
-                    .name(task.getName())
-                    .description(task.getDescription())
-                    .taskDate(task.getTaskDate())
-                    .tag(entity)
-                    .build());
-        entity.setTasks(tasks);
-
-        return repository.save(entity).getId();
+        return repository.save(tagEntity).getId();
     }
 
     @Override
