@@ -3,9 +3,12 @@ package ru.billing.testwork.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.billing.testwork.model.TagModel;
 import ru.billing.testwork.service.impl.TagServiceImpl;
+
+import javax.validation.Valid;
 
 @RestController
 public class TagController {
@@ -13,8 +16,14 @@ public class TagController {
     private TagServiceImpl tagService;
 
     @PostMapping("/tag")
-    public ResponseEntity<TagModel> createTag(@RequestBody TagModel tagModel) {
-        return new ResponseEntity<>(tagService.save(tagModel), HttpStatus.CREATED);
+    public ResponseEntity<?> createTag(
+            @RequestBody @Valid TagModel tagModel,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors())
+            return new ResponseEntity<>(bindingResult.getAllErrors().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        else
+            return new ResponseEntity<>(tagService.save(tagModel), HttpStatus.CREATED);
     }
 
     @GetMapping("/tag/{id}")

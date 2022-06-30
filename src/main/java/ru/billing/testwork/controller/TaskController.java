@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.billing.testwork.model.TaskModel;
 import ru.billing.testwork.service.impl.TaskServiceImpl;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -27,8 +29,14 @@ public class TaskController {
     }
 
     @PostMapping("/task")
-    public ResponseEntity<Long> createTask(@RequestBody TaskModel taskModel) {
-        return new ResponseEntity<>(taskService.save(taskModel), HttpStatus.CREATED);
+    public ResponseEntity<?> createTask(
+            @RequestBody @Valid TaskModel taskModel,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors())
+            return new ResponseEntity<>(bindingResult.getAllErrors().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        else
+            return new ResponseEntity<>(taskService.save(taskModel), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/task/{id}")
